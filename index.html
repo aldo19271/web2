@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portfolio — Modern Minimalist</title>
+<style>
+  /* ============ RESET & BASE ============ */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --bg: #0a0a0a;
+    --bg-soft: #111111;
+    --fg: #f5f5f5;
+    --muted: #888888;
+    --accent: #7c5cff;
+    --accent-soft: #a08cff;
+    --border: #1f1f1f;
+  }
+
+  html, body {
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    cursor: none; /* custom cursor feel */
+  }
+
+  /* Custom cursor */
+  .cursor-dot {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--accent-soft);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease-out, width 0.2s, height 0.2s;
+    opacity: 0.6;
+  }
+  @media (hover: none) {
+    body { cursor: auto; }
+    .cursor-dot, .cursor-ring { display: none; }
+  }
+
+  /* ============ CANVAS 3D ============ */
+  #scene {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* ============ LAYOUT ============ */
+  .content {
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .content a,
+  .content button,
+  .content .card {
+    pointer-events: auto;
+  }
+
+  /* ============ NAV ============ */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 6vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+    background: rgba(10, 10, 10, 0.4);
+    border-bottom: 1px solid var(--border);
+  }
+
+  nav .logo {
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+  }
+  nav .logo span { color: var(--accent); }
+
+  nav ul {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  nav ul a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+  }
+  nav ul a:hover { color: var(--fg); }
+
+  @media (max-width: 640px) {
+    nav ul { display: none; }
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 6vw;
+    position: relative;
+  }
+
+  .hero .badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-soft);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+    width: fit-content;
+    background: rgba(124, 92, 255, 0.05);
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+    max-width: 900px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero p {
+    color: var(--muted);
+    font-size: clamp(1rem, 1.4vw, 1.15rem);
+    max-width: 520px;
+    margin-bottom: 40px;
+  }
+
+  .hero .cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--fg);
+    cursor: none;
+  }
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .btn.primary:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent-soft);
+    transform: translateY(-2px);
+  }
+  .btn:hover {
+    border-color: var(--accent);
+    color: var(--accent-soft);
+  }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 6vw;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .scroll-hint::after {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--muted);
+    animation: slide 2s infinite;
+  }
+  @keyframes slide {
+    0%, 100% { transform: translateX(0); opacity: 0.4; }
+    50% { transform: translateX(10px); opacity: 1; }
+  }
+
+  /* ============ SECTIONS ============ */
+  section.block {
+    padding: 120px 6vw;
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    color: var(--accent-soft);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 60px;
+    max-width: 720px;
+  }
+
+  /* Works grid */
+  .works {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .card {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--mx, 50%) var(--my, 50%),
+      rgba(124, 92, 255, 0.15),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .card:hover::before { opacity: 1; }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(124, 92, 255, 0.4);
+  }
+
+  .card .num {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+  .card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .card p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+  .card .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .card .tags span {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--muted);
+  }
+
+  /* About / Skills */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+  }
+  @media (max-width: 768px) {
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  .about-grid p {
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .skills {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .skill {
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-soft);
+  }
+  .skill strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+  }
+  .skill span {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* Contact */
+  .contact {
+    text-align: center;
+    padding: 160px 6vw;
+  }
+  .contact h2 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    margin-bottom: 30px;
+  }
+  .contact h2 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  /* Footer */
+  footer {
+    padding: 40px 6vw;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  footer .socials {
+    display: flex;
+    gap: 24px;
+  }
+  footer a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  footer a:hover { color: var(--accent-soft); }
+
+  /* Fade-in on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Loading overlay */
+  #loader {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.6s ease;
+  }
+  #loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  #loader .spinner {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader"><div class="spinner"></div></div>
+
+<!-- Custom cursor -->
+<div class="cursor-ring"></div>
+<div class="cursor-dot"></div>
+
+<!-- 3D Canvas -->
+<canvas id="scene"></canvas>
+
+<!-- Content -->
+<div class="content">
+
+  <nav>
+    <div class="logo">PORT<span>FOLIO</span></div>
+    <ul>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <span class="badge">Available for work — 2025</span>
+    <h1>Designing <em>digital</em> experiences with purpose.</h1>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+      tempor incididunt ut labore et dolore magna aliqua.
+    </p>
+    <div class="cta">
+      <a href="#work" class="btn primary">Lihat Karya →</a>
+      <a href="#contact" class="btn">Hubungi Saya</a>
+    </div>
+    <div class="scroll-hint">Scroll</div>
+  </section>
+
+  <!-- WORK -->
+  <section class="block" id="work">
+    <div class="section-label">Selected Work</div>
+    <h2 class="section-title reveal">Proyek pilihan dengan pendekatan minimalis.</h2>
+    <div class="works">
+      <div class="card reveal">
+        <div class="num">01 / PROJECT</div>
+        <h3>Lorem Ipsum One</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor.</p>
+        <div class="tags"><span>Design</span><span>Web</span></div>
+      </div>
+      <div class="card reveal">
+        <div class="num">02 / PROJECT</div>
+        <h3>Lorem Ipsum Two</h3>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+        <div class="tags"><span>Branding</span><span>UI</span></div>
+      </div>
+      <div class="card reveal">
+        <div class="num">03 / PROJECT</div>
+        <h3>Lorem Ipsum Three</h3>
+        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.</p>
+        <div class="tags"><span>3D</span><span>Motion</span></div>
+      </div>
+      <div class="card reveal">
+        <div class="num">04 / PROJECT</div>
+        <h3>Lorem Ipsum Four</h3>
+        <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia.</p>
+        <div class="tags"><span>App</span><span>UX</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="block" id="about">
+    <div class="section-label">About</div>
+    <h2 class="section-title reveal">Lorem ipsum dolor sit amet.</h2>
+    <div class="about-grid">
+      <div class="reveal">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+      </div>
+      <div class="skills reveal">
+        <div class="skill"><strong>Lorem Ipsum</strong><span>Consectetur elit</span></div>
+        <div class="skill"><strong>Dolor Sit</strong><span>Amet adipiscing</span></div>
+        <div class="skill"><strong>Tempor Magna</strong><span>Labore dolore</span></div>
+        <div class="skill"><strong>Veniam Quis</strong><span>Nostrud amet</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <h2 class="reveal">Mari <em>berkolaborasi</em>.</h2>
+    <a href="mailto:hello@example.com" class="btn primary reveal">hello@example.com</a>
+  </section>
+
+  <footer>
+    <div>© 2025 Lorem Ipsum. All rights reserved.</div>
+    <div class="socials">
+      <a href="#">Dribbble</a>
+      <a href="#">Behance</a>
+      <a href="#">LinkedIn</a>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ============ THREE.JS ============ -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ============================================================
+   SETUP SCENE
+   ============================================================ */
+const canvas = document.getElementById('scene');
+const scene = new THREE.Scene();
+
+// Kamera — perspektif agar terasa 3D
+const camera = new THREE.PerspectiveCamera(
+  45,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  100
+);
+camera.position.z = 8;
+
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true,
+  alpha: true
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+/* ============================================================
+   LIGHTING — tema dark, aksen ungu
+   ============================================================ */
+scene.add(new THREE.AmbientLight(0xffffff, 0.15));
+
+// Key light ungu
+const keyLight = new THREE.PointLight(0x7c5cff, 60, 30);
+keyLight.position.set(5, 5, 5);
+scene.add(keyLight);
+
+// Rim light biru-ungu
+const rimLight = new THREE.PointLight(0x4a3aff, 40, 30);
+rimLight.position.set(-6, -3, -4);
+scene.add(rimLight);
+
+// Fill light putih lembut
+const fillLight = new THREE.PointLight(0xffffff, 15, 30);
+fillLight.position.set(0, 6, 3);
+scene.add(fillLight);
+
+/* ============================================================
+   GROUP UTAMA — semua objek dibungkus agar mudah dimanipulasi
+   ============================================================ */
+const group = new THREE.Group();
+scene.add(group);
+
+/* ============================================================
+   OBJEK 3D — Komposisi geometri minimalis
+   - Icosahedron utama (kristal pusat)
+   - Torus knot sebagai aksen
+   - Beberapa sphere kecil sebagai satelit
+   ============================================================ */
+
+// 1. Icosahedron utama (kristal)
+const icoGeo = new THREE.IcosahedronGeometry(1.6, 0);
+const icoMat = new THREE.MeshStandardMaterial({
+  color: 0x7c5cff,
+  metalness: 0.9,
+  roughness: 0.15,
+  flatShading: true,
+  emissive: 0x1a0f3d,
+  emissiveIntensity: 0.5
+});
+const ico = new THREE.Mesh(icoGeo, icoMat);
+group.add(ico);
+
+// Wireframe overlay tipis
+const wireMat = new THREE.MeshBasicMaterial({
+  color: 0xa08cff,
+  wireframe: true,
+  transparent: true,
+  opacity: 0.15
+});
+const wireIco = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(1.65, 0),
+  wireMat
+);
+group.add(wireIco);
+
+// 2. Torus knot sebagai aksen melingkar
+const torusGeo = new THREE.TorusKnotGeometry(2.6, 0.04, 160, 16, 2, 3);
+const torusMat = new THREE.MeshStandardMaterial({
+  color: 0xffffff,
+  metalness: 1,
+  roughness: 0.2,
+  emissive: 0x2a1a5c,
+  emissiveIntensity: 0.3
+});
+const torus = new THREE.Mesh(torusGeo, torusMat);
+torus.rotation.x = Math.PI / 4;
+group.add(torus);
+
+// 3. Satelit sphere kecil mengelilingi
+const satellites = [];
+const satPositions = [
+  { r: 2.2, angle: 0,            y: 0.8,  size: 0.12, color: 0xa08cff },
+  { r: 2.4, angle: Math.PI * 0.6, y: -0.6, size: 0.09, color: 0x7c5cff },
+  { r: 2.0, angle: Math.PI * 1.2, y: 0.4,  size: 0.14, color: 0xffffff },
+  { r: 2.6, angle: Math.PI * 1.7, y: -0.3, size: 0.07, color: 0x4a3aff },
+  { r: 2.3, angle: Math.PI * 0.3, y: 1.1,  size: 0.1,  color: 0xa08cff }
+];
+
+satPositions.forEach(p => {
+  const satGeo = new THREE.SphereGeometry(p.size, 16, 16);
+  const satMat = new THREE.MeshStandardMaterial({
+    color: p.color,
+    metalness: 0.8,
+    roughness: 0.2,
+    emissive: p.color,
+    emissiveIntensity: 0.8
+  });
+  const sat = new THREE.Mesh(satGeo, satMat);
+  sat.userData = p;
+  group.add(sat);
+  satellites.push(sat);
+});
+
+/* ============================================================
+   PARTICLE FIELD — debu bintang latar
+   ============================================================ */
+const particleCount = 400;
+const particleGeo = new THREE.BufferGeometry();
+const particlePositions = new Float32Array(particleCount * 3);
+for (let i = 0; i < particleCount * 3; i++) {
+  particlePositions[i] = (Math.random() - 0.5) * 40;
+}
+particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+const particleMat = new THREE.PointsMaterial({
+  color: 0x7c5cff,
+  size: 0.03,
+  transparent: true,
+  opacity: 0.6,
+  sizeAttenuation: true
+});
+const particles = new THREE.Points(particleGeo, particleMat);
+scene.add(particles);
+
+/* ============================================================
+   INTERAKSI MOUSE / TOUCH
+   Objek mengikuti cursor / sentuhan
+   ============================================================ */
+const mouse = new THREE.Vector2(0, 0);
+const target = new THREE.Vector2(0, 0);
+
+function updatePointer(x, y) {
+  // Normalized -1 .. 1
+  target.x = (x / window.innerWidth) * 2 - 1;
+  target.y = -(y / window.innerHeight) * 2 + 1;
+}
+
+window.addEventListener('mousemove', (e) => {
+  updatePointer(e.clientX, e.clientY);
+});
+
+window.addEventListener('touchmove', (e) => {
+  if (e.touches.length > 0) {
+    updatePointer(e.touches[0].clientX, e.touches[0].clientY);
+  }
+}, { passive: true });
+
+window.addEventListener('touchstart', (e) => {
+  if (e.touches.length > 0) {
+    updatePointer(e.touches[0].clientX, e.touches[0].clientY);
+  }
+}, { passive: true });
+
+/* ============================================================
+   ANIMATION LOOP
+   ============================================================ */
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  const t = clock.getElapsedTime();
+
+  // Smooth lerp untuk pergerakan mengikuti cursor
+  mouse.x += (target.x - mouse.x) * 0.06;
+  mouse.y += (target.y - mouse.y) * 0.06;
+
+  // Group bergerak mengikuti cursor (dengan batas)
+  group.position.x = mouse.x * 2.2;
+  group.position.y = mouse.y * 1.5;
+
+  // Rotasi group menghadap cursor
+  group.rotation.y = mouse.x * 0.6;
+  group.rotation.x = -mouse.y * 0.4;
+
+  // Rotasi internal objek
+  ico.rotation.y += 0.003;
+  ico.rotation.x += 0.0015;
+  wireIco.rotation.y -= 0.002;
+  wireIco.rotation.x -= 0.001;
+
+  torus.rotation.z += 0.002;
+  torus.rotation.y += 0.001;
+
+  // Satelit mengorbit
+  satellites.forEach((sat, i) => {
+    const p = sat.userData;
+    const angle = p.angle + t * 0.4 + i * 0.5;
+    sat.position.x = Math.cos(angle) * p.r;
+    sat.position.z = Math.sin(angle) * p.r;
+    sat.position.y = p.y + Math.sin(t * 1.5 + i) * 0.3;
+  });
+
+  // Partikel berputar pelan
+  particles.rotation.y = t * 0.02;
+  particles.rotation.x = t * 0.01;
+
+  // Light bergerak dinamis
+  keyLight.position.x = Math.sin(t * 0.5) * 5;
+  keyLight.position.z = Math.cos(t * 0.5) * 5;
+
+  renderer.render(scene, camera);
+}
+animate();
+
+/* ============================================================
+   RESIZE
+   ============================================================ */
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+const cursorDot = document.querySelector('.cursor-dot');
+const cursorRing = document.querySelector('.cursor-ring');
+let ringX = 0, ringY = 0;
+let dotX = 0, dotY = 0;
+
+window.addEventListener('mousemove', (e) => {
+  dotX = e.clientX;
+  dotY = e.clientY;
+  cursorDot.style.left = dotX + 'px';
+  cursorDot.style.top = dotY + 'px';
+});
+
+function animateCursor() {
+  ringX += (dotX - ringX) * 0.15;
+  ringY += (dotY - ringY) * 0.15;
+  cursorRing.style.left = ringX + 'px';
+  cursorRing.style.top = ringY + 'px';
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// Hover effect pada elemen interaktif
+document.querySelectorAll('a, button, .card').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursorRing.style.width = '60px';
+    cursorRing.style.height = '60px';
+    cursorRing.style.opacity = '1';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursorRing.style.width = '36px';
+    cursorRing.style.height = '36px';
+    cursorRing.style.opacity = '0.6';
+  });
+});
+
+/* ============================================================
+   CARD SPOTLIGHT (mouse position di dalam card)
+   ============================================================ */
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    card.style.setProperty('--mx', x + '%');
+    card.style.setProperty('--my', y + '%');
+  });
+});
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ============================================================
+   LOADER HIDE
+   ============================================================ */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+  }, 400);
+});
+</script>
+
+</body>
+</html>
