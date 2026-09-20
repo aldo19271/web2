@@ -3,7 +3,16 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Portfolio — Modern Minimalist</title>
+<title>Portfolio</title>
+
+<!-- Favicon (inline SVG, no external asset) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0a'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Inter,sans-serif' font-weight='700' text-anchor='middle' fill='%237c5cff'%3EP%3C/text%3E%3C/svg%3E" />
+
+<!-- Open Graph Meta (buat preview saat dishare) -->
+<meta property="og:title" content="Portfolio — Modern Minimalist" />
+<meta property="og:description" content="Designing digital experiences with purpose." />
+<meta property="og:type" content="website" />
+
 <style>
   /* ============ RESET & BASE ============ */
   * {
@@ -33,7 +42,15 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    cursor: none; /* custom cursor feel */
+    cursor: none;
+  }
+
+  /* Lenis requirement */
+  html.lenis, html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
   }
 
   /* Custom cursor */
@@ -58,7 +75,7 @@
     pointer-events: none;
     z-index: 9998;
     transform: translate(-50%, -50%);
-    transition: transform 0.15s ease-out, width 0.2s, height 0.2s;
+    transition: transform 0.15s ease-out, width 0.25s, height 0.25s, border-color 0.25s;
     opacity: 0.6;
   }
   @media (hover: none) {
@@ -104,6 +121,13 @@
     backdrop-filter: blur(12px);
     background: rgba(10, 10, 10, 0.4);
     border-bottom: 1px solid var(--border);
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: opacity 0.8s ease 0.3s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+  }
+  body.ready nav {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   nav .logo {
@@ -123,8 +147,20 @@
     text-decoration: none;
     font-size: 0.9rem;
     transition: color 0.3s;
+    position: relative;
+  }
+  nav ul a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.3s;
   }
   nav ul a:hover { color: var(--fg); }
+  nav ul a:hover::after { width: 100%; }
 
   @media (max-width: 640px) {
     nav ul { display: none; }
@@ -180,6 +216,42 @@
     flex-wrap: wrap;
   }
 
+  /* Text reveal animation (staggered) */
+  .reveal-text {
+    overflow: hidden;
+    display: block;
+  }
+  .reveal-text > span {
+    display: inline-block;
+    transform: translateY(110%);
+    opacity: 0;
+    transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+  }
+  body.ready .reveal-text > span {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  body.ready .reveal-text:nth-child(1) > span { transition-delay: 0.1s; }
+  body.ready .reveal-text:nth-child(2) > span { transition-delay: 0.25s; }
+  body.ready .reveal-text:nth-child(3) > span { transition-delay: 0.4s; }
+  body.ready .reveal-text:nth-child(4) > span { transition-delay: 0.55s; }
+
+  /* Fade up for non-text elements */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  body.ready .fade-up {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  body.ready .badge.fade-up { transition-delay: 0.05s; }
+  body.ready .hero p.fade-up { transition-delay: 0.7s; }
+  body.ready .cta.fade-up { transition-delay: 0.85s; }
+  body.ready .scroll-hint.fade-up { transition-delay: 1s; }
+
+  /* ============ BUTTONS (magnetic) ============ */
   .btn {
     display: inline-block;
     padding: 14px 28px;
@@ -187,11 +259,13 @@
     font-size: 0.9rem;
     font-weight: 500;
     text-decoration: none;
-    transition: all 0.3s;
+    transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.3s;
     border: 1px solid var(--border);
     background: transparent;
     color: var(--fg);
     cursor: none;
+    will-change: transform;
+    position: relative;
   }
   .btn.primary {
     background: var(--accent);
@@ -201,11 +275,18 @@
   .btn.primary:hover {
     background: var(--accent-soft);
     border-color: var(--accent-soft);
-    transform: translateY(-2px);
   }
   .btn:hover {
     border-color: var(--accent);
     color: var(--accent-soft);
+  }
+  .btn.primary:hover {
+    color: #fff;
+  }
+  .btn-inner {
+    display: inline-block;
+    transition: transform 0.3s;
+    will-change: transform;
   }
 
   /* Scroll indicator */
@@ -268,7 +349,7 @@
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 32px;
-    transition: all 0.4s ease;
+    transition: transform 0.4s ease, border-color 0.4s;
     position: relative;
     overflow: hidden;
   }
@@ -395,7 +476,7 @@
   }
   footer a:hover { color: var(--accent-soft); }
 
-  /* Fade-in on scroll */
+  /* Reveal on scroll */
   .reveal {
     opacity: 0;
     transform: translateY(30px);
@@ -406,36 +487,83 @@
     transform: translateY(0);
   }
 
-  /* Loading overlay */
+  /* ============ PRELOADER ============ */
   #loader {
     position: fixed;
     inset: 0;
     background: var(--bg);
     z-index: 10000;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.6s ease;
+    gap: 24px;
+    transition: opacity 0.8s ease, visibility 0.8s;
   }
   #loader.hidden {
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
   }
-  #loader .spinner {
-    width: 40px;
-    height: 40px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+
+  #loader .loader-brand {
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #loader .loader-count {
+    font-size: clamp(3rem, 10vw, 6rem);
+    font-weight: 700;
+    letter-spacing: -3px;
+    color: var(--fg);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  #loader .loader-count span {
+    color: var(--accent);
+    font-size: 0.5em;
+    vertical-align: top;
+    margin-left: 4px;
+  }
+
+  #loader .loader-bar {
+    width: min(280px, 60vw);
+    height: 1px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  #loader .loader-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width 0.2s ease;
+  }
+  #loader .loader-tag {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
 </style>
 </head>
 <body>
 
-<!-- Loader -->
-<div id="loader"><div class="spinner"></div></div>
+<!-- ============ PRELOADER ============ -->
+<div id="loader">
+  <div class="loader-brand">PORTFOLIO / 2025</div>
+  <div class="loader-count">
+    <span id="loaderNum">0</span><span>%</span>
+  </div>
+  <div class="loader-bar"></div>
+  <div class="loader-tag">Menyiapkan sesuatu yang indah...</div>
+</div>
 
 <!-- Custom cursor -->
 <div class="cursor-ring"></div>
@@ -450,25 +578,33 @@
   <nav>
     <div class="logo">PORT<span>FOLIO</span></div>
     <ul>
-      <li><a href="#work">Work</a></li>
-      <li><a href="#about">About</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li><a href="#work" data-scroll>Work</a></li>
+      <li><a href="#about" data-scroll>About</a></li>
+      <li><a href="#contact" data-scroll>Contact</a></li>
     </ul>
   </nav>
 
   <!-- HERO -->
   <section class="hero">
-    <span class="badge">Available for work — 2025</span>
-    <h1>Designing <em>digital</em> experiences with purpose.</h1>
-    <p>
+    <span class="badge fade-up">Available for work — 2025</span>
+    <h1>
+      <span class="reveal-text"><span>Designing</span></span>
+      <span class="reveal-text"><span><em>digital</em> experiences</span></span>
+      <span class="reveal-text"><span>with purpose.</span></span>
+    </h1>
+    <p class="fade-up">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
       tempor incididunt ut labore et dolore magna aliqua.
     </p>
-    <div class="cta">
-      <a href="#work" class="btn primary">Lihat Karya →</a>
-      <a href="#contact" class="btn">Hubungi Saya</a>
+    <div class="cta fade-up">
+      <a href="#work" class="btn primary magnetic" data-scroll>
+        <span class="btn-inner">Lihat Karya →</span>
+      </a>
+      <a href="#contact" class="btn magnetic" data-scroll>
+        <span class="btn-inner">Hubungi Saya</span>
+      </a>
     </div>
-    <div class="scroll-hint">Scroll</div>
+    <div class="scroll-hint fade-up">Scroll</div>
   </section>
 
   <!-- WORK -->
@@ -525,7 +661,9 @@
   <!-- CONTACT -->
   <section class="contact" id="contact">
     <h2 class="reveal">Mari <em>berkolaborasi</em>.</h2>
-    <a href="mailto:hello@example.com" class="btn primary reveal">hello@example.com</a>
+    <a href="mailto:hello@example.com" class="btn primary magnetic reveal">
+      <span class="btn-inner">hello@example.com</span>
+    </a>
   </section>
 
   <footer>
@@ -548,16 +686,45 @@
 }
 </script>
 
+<!-- ============ LENIS (smooth scroll) ============ -->
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+
 <script type="module">
 import * as THREE from 'three';
 
 /* ============================================================
-   SETUP SCENE
+   LENIS SMOOTH SCROLL
+   ============================================================ */
+const lenis = new Lenis({
+  duration: 1.2,
+  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  smoothWheel: true,
+  touchMultiplier: 2
+});
+
+function raf(time) {
+  lenis.raf(time);
+  requestAnimationFrame(raf);
+}
+requestAnimationFrame(raf);
+
+// Anchor link pakai lenis (smooth)
+document.querySelectorAll('a[data-scroll]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    const href = link.getAttribute('href');
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      lenis.scrollTo(href, { offset: 0, duration: 1.4 });
+    }
+  });
+});
+
+/* ============================================================
+   3D SCENE
    ============================================================ */
 const canvas = document.getElementById('scene');
 const scene = new THREE.Scene();
 
-// Kamera — perspektif agar terasa 3D
 const camera = new THREE.PerspectiveCamera(
   45,
   window.innerWidth / window.innerHeight,
@@ -576,40 +743,26 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.1;
 
-/* ============================================================
-   LIGHTING — tema dark, aksen ungu
-   ============================================================ */
+/* Lighting */
 scene.add(new THREE.AmbientLight(0xffffff, 0.15));
 
-// Key light ungu
 const keyLight = new THREE.PointLight(0x7c5cff, 60, 30);
 keyLight.position.set(5, 5, 5);
 scene.add(keyLight);
 
-// Rim light biru-ungu
 const rimLight = new THREE.PointLight(0x4a3aff, 40, 30);
 rimLight.position.set(-6, -3, -4);
 scene.add(rimLight);
 
-// Fill light putih lembut
 const fillLight = new THREE.PointLight(0xffffff, 15, 30);
 fillLight.position.set(0, 6, 3);
 scene.add(fillLight);
 
-/* ============================================================
-   GROUP UTAMA — semua objek dibungkus agar mudah dimanipulasi
-   ============================================================ */
+/* Group utama */
 const group = new THREE.Group();
 scene.add(group);
 
-/* ============================================================
-   OBJEK 3D — Komposisi geometri minimalis
-   - Icosahedron utama (kristal pusat)
-   - Torus knot sebagai aksen
-   - Beberapa sphere kecil sebagai satelit
-   ============================================================ */
-
-// 1. Icosahedron utama (kristal)
+/* Icosahedron */
 const icoGeo = new THREE.IcosahedronGeometry(1.6, 0);
 const icoMat = new THREE.MeshStandardMaterial({
   color: 0x7c5cff,
@@ -622,7 +775,7 @@ const icoMat = new THREE.MeshStandardMaterial({
 const ico = new THREE.Mesh(icoGeo, icoMat);
 group.add(ico);
 
-// Wireframe overlay tipis
+/* Wireframe overlay */
 const wireMat = new THREE.MeshBasicMaterial({
   color: 0xa08cff,
   wireframe: true,
@@ -635,7 +788,7 @@ const wireIco = new THREE.Mesh(
 );
 group.add(wireIco);
 
-// 2. Torus knot sebagai aksen melingkar
+/* Torus knot */
 const torusGeo = new THREE.TorusKnotGeometry(2.6, 0.04, 160, 16, 2, 3);
 const torusMat = new THREE.MeshStandardMaterial({
   color: 0xffffff,
@@ -648,10 +801,10 @@ const torus = new THREE.Mesh(torusGeo, torusMat);
 torus.rotation.x = Math.PI / 4;
 group.add(torus);
 
-// 3. Satelit sphere kecil mengelilingi
+/* Satelit */
 const satellites = [];
 const satPositions = [
-  { r: 2.2, angle: 0,            y: 0.8,  size: 0.12, color: 0xa08cff },
+  { r: 2.2, angle: 0,             y: 0.8,  size: 0.12, color: 0xa08cff },
   { r: 2.4, angle: Math.PI * 0.6, y: -0.6, size: 0.09, color: 0x7c5cff },
   { r: 2.0, angle: Math.PI * 1.2, y: 0.4,  size: 0.14, color: 0xffffff },
   { r: 2.6, angle: Math.PI * 1.7, y: -0.3, size: 0.07, color: 0x4a3aff },
@@ -673,9 +826,7 @@ satPositions.forEach(p => {
   satellites.push(sat);
 });
 
-/* ============================================================
-   PARTICLE FIELD — debu bintang latar
-   ============================================================ */
+/* Particle field */
 const particleCount = 400;
 const particleGeo = new THREE.BufferGeometry();
 const particlePositions = new Float32Array(particleCount * 3);
@@ -693,38 +844,24 @@ const particleMat = new THREE.PointsMaterial({
 const particles = new THREE.Points(particleGeo, particleMat);
 scene.add(particles);
 
-/* ============================================================
-   INTERAKSI MOUSE / TOUCH
-   Objek mengikuti cursor / sentuhan
-   ============================================================ */
+/* Pointer interaction */
 const mouse = new THREE.Vector2(0, 0);
 const target = new THREE.Vector2(0, 0);
 
 function updatePointer(x, y) {
-  // Normalized -1 .. 1
   target.x = (x / window.innerWidth) * 2 - 1;
   target.y = -(y / window.innerHeight) * 2 + 1;
 }
 
-window.addEventListener('mousemove', (e) => {
-  updatePointer(e.clientX, e.clientY);
-});
-
+window.addEventListener('mousemove', (e) => updatePointer(e.clientX, e.clientY));
 window.addEventListener('touchmove', (e) => {
-  if (e.touches.length > 0) {
-    updatePointer(e.touches[0].clientX, e.touches[0].clientY);
-  }
+  if (e.touches.length > 0) updatePointer(e.touches[0].clientX, e.touches[0].clientY);
 }, { passive: true });
-
 window.addEventListener('touchstart', (e) => {
-  if (e.touches.length > 0) {
-    updatePointer(e.touches[0].clientX, e.touches[0].clientY);
-  }
+  if (e.touches.length > 0) updatePointer(e.touches[0].clientX, e.touches[0].clientY);
 }, { passive: true });
 
-/* ============================================================
-   ANIMATION LOOP
-   ============================================================ */
+/* Animation loop */
 const clock = new THREE.Clock();
 
 function animate() {
@@ -732,19 +869,14 @@ function animate() {
 
   const t = clock.getElapsedTime();
 
-  // Smooth lerp untuk pergerakan mengikuti cursor
   mouse.x += (target.x - mouse.x) * 0.06;
   mouse.y += (target.y - mouse.y) * 0.06;
 
-  // Group bergerak mengikuti cursor (dengan batas)
   group.position.x = mouse.x * 2.2;
   group.position.y = mouse.y * 1.5;
-
-  // Rotasi group menghadap cursor
   group.rotation.y = mouse.x * 0.6;
   group.rotation.x = -mouse.y * 0.4;
 
-  // Rotasi internal objek
   ico.rotation.y += 0.003;
   ico.rotation.x += 0.0015;
   wireIco.rotation.y -= 0.002;
@@ -753,7 +885,6 @@ function animate() {
   torus.rotation.z += 0.002;
   torus.rotation.y += 0.001;
 
-  // Satelit mengorbit
   satellites.forEach((sat, i) => {
     const p = sat.userData;
     const angle = p.angle + t * 0.4 + i * 0.5;
@@ -762,11 +893,9 @@ function animate() {
     sat.position.y = p.y + Math.sin(t * 1.5 + i) * 0.3;
   });
 
-  // Partikel berputar pelan
   particles.rotation.y = t * 0.02;
   particles.rotation.x = t * 0.01;
 
-  // Light bergerak dinamis
   keyLight.position.x = Math.sin(t * 0.5) * 5;
   keyLight.position.z = Math.cos(t * 0.5) * 5;
 
@@ -774,9 +903,7 @@ function animate() {
 }
 animate();
 
-/* ============================================================
-   RESIZE
-   ============================================================ */
+/* Resize */
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -808,22 +935,47 @@ function animateCursor() {
 }
 animateCursor();
 
-// Hover effect pada elemen interaktif
 document.querySelectorAll('a, button, .card').forEach(el => {
   el.addEventListener('mouseenter', () => {
     cursorRing.style.width = '60px';
     cursorRing.style.height = '60px';
     cursorRing.style.opacity = '1';
+    cursorRing.style.borderColor = '#7c5cff';
   });
   el.addEventListener('mouseleave', () => {
     cursorRing.style.width = '36px';
     cursorRing.style.height = '36px';
     cursorRing.style.opacity = '0.6';
+    cursorRing.style.borderColor = '#a08cff';
   });
 });
 
 /* ============================================================
-   CARD SPOTLIGHT (mouse position di dalam card)
+   MAGNETIC BUTTONS
+   ============================================================ */
+document.querySelectorAll('.magnetic').forEach(el => {
+  const inner = el.querySelector('.btn-inner');
+  const strength = 0.35;
+
+  el.addEventListener('mousemove', (e) => {
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+
+    el.style.transform = `translate(${x * strength}px, ${y * strength}px)`;
+    if (inner) {
+      inner.style.transform = `translate(${x * strength * 0.5}px, ${y * strength * 0.5}px)`;
+    }
+  });
+
+  el.addEventListener('mouseleave', () => {
+    el.style.transform = 'translate(0, 0)';
+    if (inner) inner.style.transform = 'translate(0, 0)';
+  });
+});
+
+/* ============================================================
+   CARD SPOTLIGHT
    ============================================================ */
 document.querySelectorAll('.card').forEach(card => {
   card.addEventListener('mousemove', (e) => {
@@ -849,13 +1001,64 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 /* ============================================================
-   LOADER HIDE
+   PRELOADER — progress 0 → 100
    ============================================================ */
+const loaderEl = document.getElementById('loader');
+const loaderNum = document.getElementById('loaderNum');
+const loaderBar = document.querySelector('#loader .loader-bar');
+
+let progress = 0;
+const targetProgress = 100;
+
+function updateLoader() {
+  progress += (targetProgress - progress) * 0.08;
+
+  if (progress >= 99.5) {
+    progress = 100;
+    loaderNum.textContent = '100';
+    if (loaderBar) loaderBar.style.setProperty('--w', '100%');
+    loaderBar.style.cssText += ';';
+    loaderBar.querySelector;
+    loaderBar.style.position = 'relative';
+    loaderBar.style.overflow = 'hidden';
+    // set bar width via ::after menggunakan custom style
+    loaderBar.style.setProperty('--bar-width', '100%');
+    const style = document.createElement('style');
+    style.textContent = `#loader .loader-bar::after { width: ${progress}% !important; }`;
+    document.head.appendChild(style);
+  } else {
+    loaderNum.textContent = Math.floor(progress);
+    const styleId = 'loader-bar-style';
+    let styleEl = document.getElementById(styleId);
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = styleId;
+      document.head.appendChild(styleEl);
+    }
+    styleEl.textContent = `#loader .loader-bar::after { width: ${progress}% !important; }`;
+  }
+
+  if (progress < 100) {
+    requestAnimationFrame(updateLoader);
+  } else {
+    setTimeout(() => {
+      loaderEl.classList.add('hidden');
+      document.body.classList.add('ready');
+    }, 400);
+  }
+}
+
 window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('loader').classList.add('hidden');
-  }, 400);
+  setTimeout(updateLoader, 200);
 });
+
+// Fallback — kalau load event gak kepanggil dalam 4 detik, force hide
+setTimeout(() => {
+  if (!document.body.classList.contains('ready')) {
+    loaderEl.classList.add('hidden');
+    document.body.classList.add('ready');
+  }
+}, 4000);
 </script>
 
 </body>
