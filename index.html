@@ -5,10 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Portfolio</title>
 
-<!-- Favicon (inline SVG, no external asset) -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0a'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Inter,sans-serif' font-weight='700' text-anchor='middle' fill='%237c5cff'%3EP%3C/text%3E%3C/svg%3E" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0805'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Inter,sans-serif' font-weight='700' text-anchor='middle' fill='%23d4a860'%3EP%3C/text%3E%3C/svg%3E" />
 
-<!-- Open Graph Meta (buat preview saat dishare) -->
 <meta property="og:title" content="Portfolio — Modern Minimalist" />
 <meta property="og:description" content="Designing digital experiences with purpose." />
 <meta property="og:type" content="website" />
@@ -22,13 +20,15 @@
   }
 
   :root {
-    --bg: #0a0a0a;
-    --bg-soft: #111111;
-    --fg: #f5f5f5;
-    --muted: #888888;
-    --accent: #7c5cff;
-    --accent-soft: #a08cff;
-    --border: #1f1f1f;
+    --bg: #0a0805;
+    --bg-soft: #14100a;
+    --fg: #f5f2ea;
+    --muted: #8a8275;
+    --accent: #d4a860;
+    --accent-soft: #e8c990;
+    --accent-warm: #8a5a20;
+    --border: #221a10;
+    --border-warm: #3a2a15;
   }
 
   html, body {
@@ -45,15 +45,10 @@
     cursor: none;
   }
 
-  /* Lenis requirement */
-  html.lenis, html.lenis body {
-    height: auto;
-  }
-  .lenis.lenis-smooth {
-    scroll-behavior: auto !important;
-  }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
 
-  /* Custom cursor */
+  /* ============ CUSTOM CURSOR ============ */
   .cursor-dot {
     position: fixed;
     width: 8px;
@@ -65,6 +60,7 @@
     transform: translate(-50%, -50%);
     transition: width 0.2s, height 0.2s, background 0.2s;
     mix-blend-mode: difference;
+    box-shadow: 0 0 12px var(--accent);
   }
   .cursor-ring {
     position: fixed;
@@ -77,6 +73,7 @@
     transform: translate(-50%, -50%);
     transition: transform 0.15s ease-out, width 0.25s, height 0.25s, border-color 0.25s;
     opacity: 0.6;
+    box-shadow: 0 0 20px rgba(212, 168, 96, 0.15);
   }
   @media (hover: none) {
     body { cursor: auto; }
@@ -94,13 +91,23 @@
     pointer-events: none;
   }
 
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse at 70% 40%, rgba(212, 168, 96, 0.06), transparent 50%),
+      radial-gradient(ellipse at 30% 70%, rgba(138, 90, 32, 0.05), transparent 60%);
+  }
+
   /* ============ LAYOUT ============ */
   .content {
     position: relative;
     z-index: 2;
     pointer-events: none;
   }
-
   .content a,
   .content button,
   .content .card {
@@ -119,7 +126,8 @@
     width: 100%;
     z-index: 100;
     backdrop-filter: blur(12px);
-    background: rgba(10, 10, 10, 0.4);
+    -webkit-backdrop-filter: blur(12px);
+    background: linear-gradient(180deg, rgba(10, 8, 5, 0.6) 0%, rgba(10, 8, 5, 0.3) 100%);
     border-bottom: 1px solid var(--border);
     opacity: 0;
     transform: translateY(-100%);
@@ -134,8 +142,13 @@
     font-weight: 700;
     font-size: 1.1rem;
     letter-spacing: 0.5px;
+    color: #f5f2ea;
+    text-shadow: 0 0 20px rgba(212, 168, 96, 0.3);
   }
-  nav .logo span { color: var(--accent); }
+  nav .logo span {
+    color: #d4a860;
+    text-shadow: 0 0 16px rgba(212, 168, 96, 0.5);
+  }
 
   nav ul {
     display: flex;
@@ -156,10 +169,10 @@
     bottom: -4px;
     width: 0;
     height: 1px;
-    background: var(--accent);
+    background: linear-gradient(90deg, var(--accent), var(--accent-soft));
     transition: width 0.3s;
   }
-  nav ul a:hover { color: var(--fg); }
+  nav ul a:hover { color: var(--accent-soft); }
   nav ul a:hover::after { width: 100%; }
 
   @media (max-width: 640px) {
@@ -182,14 +195,17 @@
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--accent-soft);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-warm);
     padding: 6px 14px;
     border-radius: 100px;
     margin-bottom: 24px;
     width: fit-content;
-    background: rgba(124, 92, 255, 0.05);
+    background: linear-gradient(135deg, rgba(212, 168, 96, 0.08) 0%, rgba(138, 90, 32, 0.04) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
+  /* ✅ HEADING UTAMA — WARNA SOLID (PASTI MUNCUL) */
   .hero h1 {
     font-size: clamp(2.5rem, 7vw, 5.5rem);
     font-weight: 700;
@@ -197,10 +213,13 @@
     letter-spacing: -2px;
     margin-bottom: 24px;
     max-width: 900px;
+    color: #f5f2ea;
+    text-shadow: 0 0 40px rgba(212, 168, 96, 0.15);
   }
   .hero h1 em {
     font-style: normal;
-    color: var(--accent);
+    color: #d4a860;
+    text-shadow: 0 0 30px rgba(212, 168, 96, 0.4);
   }
 
   .hero p {
@@ -216,11 +235,8 @@
     flex-wrap: wrap;
   }
 
-  /* Text reveal animation (staggered) */
-  .reveal-text {
-    overflow: hidden;
-    display: block;
-  }
+  /* Text reveal */
+  .reveal-text { overflow: hidden; display: block; }
   .reveal-text > span {
     display: inline-block;
     transform: translateY(110%);
@@ -236,7 +252,6 @@
   body.ready .reveal-text:nth-child(3) > span { transition-delay: 0.4s; }
   body.ready .reveal-text:nth-child(4) > span { transition-delay: 0.55s; }
 
-  /* Fade up for non-text elements */
   .fade-up {
     opacity: 0;
     transform: translateY(20px);
@@ -251,7 +266,7 @@
   body.ready .cta.fade-up { transition-delay: 0.85s; }
   body.ready .scroll-hint.fade-up { transition-delay: 1s; }
 
-  /* ============ BUTTONS (magnetic) ============ */
+  /* ============ BUTTONS ============ */
   .btn {
     display: inline-block;
     padding: 14px 28px;
@@ -259,8 +274,8 @@
     font-size: 0.9rem;
     font-weight: 500;
     text-decoration: none;
-    transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.3s;
-    border: 1px solid var(--border);
+    transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--border-warm);
     background: transparent;
     color: var(--fg);
     cursor: none;
@@ -268,21 +283,25 @@
     position: relative;
   }
   .btn.primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
+    background: linear-gradient(135deg, #d4a860 0%, #b08840 100%);
+    border-color: transparent;
+    color: #0a0805;
+    box-shadow:
+      0 8px 24px rgba(212, 168, 96, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
   .btn.primary:hover {
-    background: var(--accent-soft);
-    border-color: var(--accent-soft);
+    background: linear-gradient(135deg, #e8c990 0%, #d4a860 100%);
+    box-shadow:
+      0 12px 32px rgba(212, 168, 96, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
   }
   .btn:hover {
     border-color: var(--accent);
     color: var(--accent-soft);
+    box-shadow: 0 0 20px rgba(212, 168, 96, 0.15);
   }
-  .btn.primary:hover {
-    color: #fff;
-  }
+  .btn.primary:hover { color: #0a0805; }
   .btn-inner {
     display: inline-block;
     transition: transform 0.3s;
@@ -306,7 +325,7 @@
     content: '';
     width: 40px;
     height: 1px;
-    background: var(--muted);
+    background: linear-gradient(90deg, var(--accent), transparent);
     animation: slide 2s infinite;
   }
   @keyframes slide {
@@ -323,10 +342,11 @@
 
   .section-label {
     font-size: 0.75rem;
-    color: var(--accent-soft);
     letter-spacing: 3px;
     text-transform: uppercase;
     margin-bottom: 20px;
+    color: #e8c990;
+    text-shadow: 0 0 16px rgba(212, 168, 96, 0.4);
   }
 
   .section-title {
@@ -335,6 +355,8 @@
     letter-spacing: -1px;
     margin-bottom: 60px;
     max-width: 720px;
+    color: #f5f2ea;
+    text-shadow: 0 0 40px rgba(212, 168, 96, 0.15);
   }
 
   /* Works grid */
@@ -345,13 +367,15 @@
   }
 
   .card {
-    background: var(--bg-soft);
+    background: linear-gradient(135deg, rgba(20, 16, 10, 0.9) 0%, rgba(10, 8, 5, 0.9) 100%);
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 32px;
-    transition: transform 0.4s ease, border-color 0.4s;
+    transition: transform 0.4s ease, border-color 0.4s, box-shadow 0.4s;
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
   .card::before {
     content: '';
@@ -359,7 +383,7 @@
     inset: 0;
     background: radial-gradient(
       circle at var(--mx, 50%) var(--my, 50%),
-      rgba(124, 92, 255, 0.15),
+      rgba(212, 168, 96, 0.15),
       transparent 60%
     );
     opacity: 0;
@@ -369,7 +393,8 @@
   .card:hover::before { opacity: 1; }
   .card:hover {
     transform: translateY(-4px);
-    border-color: rgba(124, 92, 255, 0.4);
+    border-color: rgba(212, 168, 96, 0.4);
+    box-shadow: 0 20px 40px rgba(212, 168, 96, 0.08);
   }
 
   .card .num {
@@ -382,6 +407,7 @@
     font-size: 1.4rem;
     margin-bottom: 12px;
     font-weight: 600;
+    color: var(--fg);
   }
   .card p {
     color: var(--muted);
@@ -396,9 +422,10 @@
   .card .tags span {
     font-size: 0.7rem;
     padding: 4px 10px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-warm);
     border-radius: 100px;
-    color: var(--muted);
+    color: var(--accent-soft);
+    background: linear-gradient(135deg, rgba(212, 168, 96, 0.05) 0%, rgba(138, 90, 32, 0.03) 100%);
   }
 
   /* About / Skills */
@@ -425,12 +452,18 @@
     padding: 20px;
     border: 1px solid var(--border);
     border-radius: 12px;
-    background: var(--bg-soft);
+    background: linear-gradient(135deg, rgba(20, 16, 10, 0.9) 0%, rgba(10, 8, 5, 0.9) 100%);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .skill:hover {
+    border-color: rgba(212, 168, 96, 0.4);
+    box-shadow: 0 8px 24px rgba(212, 168, 96, 0.08);
   }
   .skill strong {
     display: block;
     margin-bottom: 4px;
     font-size: 0.95rem;
+    color: var(--accent-soft);
   }
   .skill span {
     font-size: 0.8rem;
@@ -447,10 +480,13 @@
     font-weight: 700;
     letter-spacing: -1.5px;
     margin-bottom: 30px;
+    color: #f5f2ea;
+    text-shadow: 0 0 40px rgba(212, 168, 96, 0.15);
   }
   .contact h2 em {
     font-style: normal;
-    color: var(--accent);
+    color: #d4a860;
+    text-shadow: 0 0 30px rgba(212, 168, 96, 0.4);
   }
 
   /* Footer */
@@ -491,7 +527,7 @@
   #loader {
     position: fixed;
     inset: 0;
-    background: var(--bg);
+    background: radial-gradient(ellipse at center, #14100a 0%, #0a0805 70%);
     z-index: 10000;
     display: flex;
     flex-direction: column;
@@ -517,15 +553,17 @@
     font-size: clamp(3rem, 10vw, 6rem);
     font-weight: 700;
     letter-spacing: -3px;
-    color: var(--fg);
     line-height: 1;
     font-variant-numeric: tabular-nums;
+    color: #f5f2ea;
+    text-shadow: 0 0 40px rgba(212, 168, 96, 0.3);
   }
   #loader .loader-count span {
-    color: var(--accent);
     font-size: 0.5em;
     vertical-align: top;
     margin-left: 4px;
+    color: #d4a860;
+    text-shadow: 0 0 30px rgba(212, 168, 96, 0.6);
   }
 
   #loader .loader-bar {
@@ -542,8 +580,9 @@
     left: 0;
     height: 100%;
     width: 0%;
-    background: var(--accent);
+    background: linear-gradient(90deg, #8a5a20 0%, #d4a860 50%, #e8c990 100%);
     transition: width 0.2s ease;
+    box-shadow: 0 0 12px rgba(212, 168, 96, 0.5);
   }
   #loader .loader-tag {
     font-size: 0.7rem;
@@ -555,7 +594,6 @@
 </head>
 <body>
 
-<!-- ============ PRELOADER ============ -->
 <div id="loader">
   <div class="loader-brand">PORTFOLIO / 2025</div>
   <div class="loader-count">
@@ -565,14 +603,11 @@
   <div class="loader-tag">Menyiapkan sesuatu yang indah...</div>
 </div>
 
-<!-- Custom cursor -->
 <div class="cursor-ring"></div>
 <div class="cursor-dot"></div>
 
-<!-- 3D Canvas -->
 <canvas id="scene"></canvas>
 
-<!-- Content -->
 <div class="content">
 
   <nav>
@@ -584,7 +619,6 @@
     </ul>
   </nav>
 
-  <!-- HERO -->
   <section class="hero">
     <span class="badge fade-up">Available for work — 2025</span>
     <h1>
@@ -607,7 +641,6 @@
     <div class="scroll-hint fade-up">Scroll</div>
   </section>
 
-  <!-- WORK -->
   <section class="block" id="work">
     <div class="section-label">Selected Work</div>
     <h2 class="section-title reveal">Proyek pilihan dengan pendekatan minimalis.</h2>
@@ -639,7 +672,6 @@
     </div>
   </section>
 
-  <!-- ABOUT -->
   <section class="block" id="about">
     <div class="section-label">About</div>
     <h2 class="section-title reveal">Lorem ipsum dolor sit amet.</h2>
@@ -658,7 +690,6 @@
     </div>
   </section>
 
-  <!-- CONTACT -->
   <section class="contact" id="contact">
     <h2 class="reveal">Mari <em>berkolaborasi</em>.</h2>
     <a href="mailto:hello@example.com" class="btn primary magnetic reveal">
@@ -677,7 +708,6 @@
 
 </div>
 
-<!-- ============ THREE.JS ============ -->
 <script type="importmap">
 {
   "imports": {
@@ -686,7 +716,6 @@
 }
 </script>
 
-<!-- ============ LENIS (smooth scroll) ============ -->
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
 
 <script type="module">
@@ -708,7 +737,6 @@ function raf(time) {
 }
 requestAnimationFrame(raf);
 
-// Anchor link pakai lenis (smooth)
 document.querySelectorAll('a[data-scroll]').forEach(link => {
   link.addEventListener('click', (e) => {
     const href = link.getAttribute('href');
@@ -720,7 +748,7 @@ document.querySelectorAll('a[data-scroll]').forEach(link => {
 });
 
 /* ============================================================
-   3D SCENE
+   3D SCENE — SATURN SYSTEM
    ============================================================ */
 const canvas = document.getElementById('scene');
 const scene = new THREE.Scene();
@@ -729,9 +757,10 @@ const camera = new THREE.PerspectiveCamera(
   45,
   window.innerWidth / window.innerHeight,
   0.1,
-  100
+  200
 );
-camera.position.z = 8;
+camera.position.set(0, 4, 13);
+camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGLRenderer({
   canvas,
@@ -744,160 +773,450 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.1;
 
 /* Lighting */
-scene.add(new THREE.AmbientLight(0xffffff, 0.15));
+scene.add(new THREE.AmbientLight(0xffe8c0, 0.35));
 
-const keyLight = new THREE.PointLight(0x7c5cff, 60, 30);
-keyLight.position.set(5, 5, 5);
+const keyLight = new THREE.PointLight(0xffd890, 80, 40);
+keyLight.position.set(6, 5, 5);
 scene.add(keyLight);
 
-const rimLight = new THREE.PointLight(0x4a3aff, 40, 30);
+const rimLight = new THREE.PointLight(0xd4a860, 50, 40);
 rimLight.position.set(-6, -3, -4);
 scene.add(rimLight);
 
-const fillLight = new THREE.PointLight(0xffffff, 15, 30);
-fillLight.position.set(0, 6, 3);
+const fillLight = new THREE.PointLight(0xffffff, 20, 40);
+fillLight.position.set(0, 8, 3);
 scene.add(fillLight);
 
 /* Group utama */
 const group = new THREE.Group();
 scene.add(group);
 
-/* Icosahedron */
-const icoGeo = new THREE.IcosahedronGeometry(1.6, 0);
-const icoMat = new THREE.MeshStandardMaterial({
-  color: 0x7c5cff,
-  metalness: 0.9,
-  roughness: 0.15,
-  flatShading: true,
-  emissive: 0x1a0f3d,
-  emissiveIntensity: 0.5
-});
-const ico = new THREE.Mesh(icoGeo, icoMat);
-group.add(ico);
+/* Tilt group — cincin & debu sejajar */
+const saturnTilt = {
+  z: THREE.MathUtils.degToRad(26.7),
+  x: THREE.MathUtils.degToRad(1),
+};
 
-/* Wireframe overlay */
-const wireMat = new THREE.MeshBasicMaterial({
-  color: 0xa08cff,
-  wireframe: true,
+const tiltGroup = new THREE.Group();
+tiltGroup.rotation.z = saturnTilt.z;
+tiltGroup.rotation.x = saturnTilt.x;
+group.add(tiltGroup);
+
+/* Shaders */
+const gradientVert = `
+  varying vec3 vNormal;
+  varying vec3 vWorldPos;
+  varying vec2 vUv;
+  void main() {
+    vNormal = normalize(normalMatrix * normal);
+    vec4 worldPos = modelMatrix * vec4(position, 1.0);
+    vWorldPos = worldPos.xyz;
+    vUv = uv;
+    gl_Position = projectionMatrix * viewMatrix * worldPos;
+  }
+`;
+
+const planetFrag = `
+  uniform vec3 colorDark;
+  uniform vec3 colorMid;
+  uniform vec3 colorLight;
+  uniform vec3 lightDir;
+  uniform float time;
+
+  varying vec3 vNormal;
+  varying vec3 vWorldPos;
+  varying vec2 vUv;
+
+  float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+  }
+
+  float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    float a = hash(i);
+    float b = hash(i + vec2(1.0, 0.0));
+    float c = hash(i + vec2(0.0, 1.0));
+    float d = hash(i + vec2(1.0, 1.0));
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+  }
+
+  float fbm(vec2 p) {
+    float v = 0.0;
+    float a = 0.5;
+    for (int i = 0; i < 3; i++) {
+      v += a * noise(p);
+      p *= 2.0;
+      a *= 0.5;
+    }
+    return v;
+  }
+
+  void main() {
+    float bandOffset = time * 0.015;
+
+    float bands1 = sin(vUv.y * 48.0 + bandOffset) * 0.5 + 0.5;
+    float bands2 = sin(vUv.y * 24.0 + bandOffset * 0.5 + 1.5) * 0.5 + 0.5;
+    float bands3 = sin(vUv.y * 96.0 + bandOffset * 2.0) * 0.5 + 0.5;
+
+    vec2 noiseCoord = vUv * vec2(30.0, 12.0);
+    noiseCoord.x += time * 0.02;
+    float noiseVal = fbm(noiseCoord);
+
+    float bands = mix(bands1, bands2, 0.4);
+    bands = mix(bands, bands3, 0.15);
+    bands = mix(bands, noiseVal, 0.3);
+
+    vec3 baseColor;
+    if (bands < 0.5) {
+      baseColor = mix(colorDark, colorMid, bands * 2.0);
+    } else {
+      baseColor = mix(colorMid, colorLight, (bands - 0.5) * 2.0);
+    }
+
+    float equator = 1.0 - abs(vUv.y - 0.5) * 2.0;
+    vec3 warmTint = vec3(0.18, 0.08, 0.0);
+    baseColor += warmTint * equator * 0.35;
+
+    float polar = smoothstep(0.8, 1.0, abs(vUv.y - 0.5) * 2.0);
+    vec3 polarTint = vec3(0.02, 0.04, 0.06);
+    baseColor += polarTint * polar;
+
+    float diff = max(dot(normalize(vNormal), normalize(lightDir)), 0.0);
+    float rim = pow(1.0 - max(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0)), 0.0), 3.0);
+    rim = rim * 0.35;
+
+    vec3 ambient = baseColor * 0.22;
+    vec3 finalColor = ambient + baseColor * diff * 0.95 + vec3(rim) * vec3(1.0, 0.95, 0.85);
+
+    gl_FragColor = vec4(finalColor, 1.0);
+  }
+`;
+
+const ringFrag = `
+  uniform vec3 colorDark;
+  uniform vec3 colorMid;
+  uniform vec3 colorLight;
+  uniform float opacityMul;
+
+  varying vec3 vNormal;
+  varying vec3 vWorldPos;
+  varying vec2 vUv;
+
+  float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+  }
+
+  void main() {
+    float r = vUv.y;
+
+    float detail = sin(r * 140.0 + hash(vUv * 50.0) * 3.0) * 0.5 + 0.5;
+    detail *= 0.6 + 0.4 * hash(floor(vUv * vec2(80.0, 200.0)));
+
+    vec3 color = mix(colorDark, colorMid, detail);
+    color = mix(color, colorLight, pow(r, 2.0) * 0.5);
+
+    float alpha = 0.9 * opacityMul;
+
+    float cassini = smoothstep(0.47, 0.49, r) * (1.0 - smoothstep(0.51, 0.53, r));
+    alpha *= 1.0 - cassini * 0.95;
+
+    float gap = sin(r * 60.0);
+    alpha *= 0.85 + 0.15 * gap;
+
+    alpha *= 1.0 - smoothstep(0.95, 1.0, r);
+    alpha *= smoothstep(0.0, 0.03, r);
+
+    gl_FragColor = vec4(color, alpha);
+  }
+`;
+
+const lightDirection = new THREE.Vector3(1, 0.3, 0.6).normalize();
+
+/* Planet */
+const planetGeo = new THREE.SphereGeometry(1.4, 64, 48);
+
+const planetMat = new THREE.ShaderMaterial({
+  uniforms: {
+    colorDark:  { value: new THREE.Color(0x8a5a20) },
+    colorMid:   { value: new THREE.Color(0xd4a860) },
+    colorLight: { value: new THREE.Color(0xf5e0b0) },
+    lightDir:   { value: lightDirection },
+    time:       { value: 0 },
+  },
+  vertexShader: gradientVert,
+  fragmentShader: planetFrag,
+});
+
+const planet = new THREE.Mesh(planetGeo, planetMat);
+planet.rotation.z = saturnTilt.z;
+group.add(planet);
+
+/* Atmospheric glow */
+const glowGeo = new THREE.SphereGeometry(1.5, 48, 32);
+const glowMat = new THREE.ShaderMaterial({
+  uniforms: {
+    color: { value: new THREE.Color(0xe8d4a0) },
+  },
+  vertexShader: `
+    varying vec3 vNormal;
+    void main() {
+      vNormal = normalize(normalMatrix * normal);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform vec3 color;
+    varying vec3 vNormal;
+    void main() {
+      float intensity = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 3.0);
+      gl_FragColor = vec4(color, intensity * 0.4);
+    }
+  `,
   transparent: true,
-  opacity: 0.15
+  side: THREE.BackSide,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
 });
-const wireIco = new THREE.Mesh(
-  new THREE.IcosahedronGeometry(1.65, 0),
-  wireMat
-);
-group.add(wireIco);
+const glow = new THREE.Mesh(glowGeo, glowMat);
+glow.rotation.z = saturnTilt.z;
+group.add(glow);
 
-/* Torus knot */
-const torusGeo = new THREE.TorusKnotGeometry(2.6, 0.04, 160, 16, 2, 3);
-const torusMat = new THREE.MeshStandardMaterial({
-  color: 0xffffff,
-  metalness: 1,
-  roughness: 0.2,
-  emissive: 0x2a1a5c,
-  emissiveIntensity: 0.3
-});
-const torus = new THREE.Mesh(torusGeo, torusMat);
-torus.rotation.x = Math.PI / 4;
-group.add(torus);
+/* Cincin */
+const ringGroup = new THREE.Group();
+tiltGroup.add(ringGroup);
 
-/* Satelit */
-const satellites = [];
-const satPositions = [
-  { r: 2.2, angle: 0,             y: 0.8,  size: 0.12, color: 0xa08cff },
-  { r: 2.4, angle: Math.PI * 0.6, y: -0.6, size: 0.09, color: 0x7c5cff },
-  { r: 2.0, angle: Math.PI * 1.2, y: 0.4,  size: 0.14, color: 0xffffff },
-  { r: 2.6, angle: Math.PI * 1.7, y: -0.3, size: 0.07, color: 0x4a3aff },
-  { r: 2.3, angle: Math.PI * 0.3, y: 1.1,  size: 0.1,  color: 0xa08cff }
+function createRing(innerRadius, outerRadius, opacityMultiplier = 1.0, colorShift = 1.0) {
+  const geo = new THREE.RingGeometry(innerRadius, outerRadius, 128, 8);
+
+  const mat = new THREE.ShaderMaterial({
+    uniforms: {
+      colorDark:  { value: new THREE.Color(0x3a3a3a).multiplyScalar(colorShift) },
+      colorMid:   { value: new THREE.Color(0x9a9a9a).multiplyScalar(colorShift) },
+      colorLight: { value: new THREE.Color(0xffffff).multiplyScalar(colorShift) },
+      opacityMul: { value: opacityMultiplier },
+    },
+    vertexShader: gradientVert,
+    fragmentShader: ringFrag,
+    transparent: true,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+  });
+
+  const ring = new THREE.Mesh(geo, mat);
+  ring.rotation.x = -Math.PI / 2;
+  return ring;
+}
+
+const ringLayers = [
+  { inner: 1.48, outer: 1.64, opacity: 0.5,  shift: 0.7  },
+  { inner: 1.64, outer: 1.92, opacity: 0.7,  shift: 0.85 },
+  { inner: 1.92, outer: 2.40, opacity: 1.0,  shift: 1.0  },
+  { inner: 2.48, outer: 2.88, opacity: 0.9,  shift: 0.95 },
+  { inner: 2.96, outer: 3.02, opacity: 0.6,  shift: 1.1  },
+  { inner: 3.20, outer: 3.36, opacity: 0.15, shift: 0.9  },
+  { inner: 3.44, outer: 4.20, opacity: 0.08, shift: 0.85 },
 ];
 
-satPositions.forEach(p => {
-  const satGeo = new THREE.SphereGeometry(p.size, 16, 16);
-  const satMat = new THREE.MeshStandardMaterial({
-    color: p.color,
-    metalness: 0.8,
-    roughness: 0.2,
-    emissive: p.color,
-    emissiveIntensity: 0.8
-  });
-  const sat = new THREE.Mesh(satGeo, satMat);
-  sat.userData = p;
-  group.add(sat);
-  satellites.push(sat);
+ringLayers.forEach(layer => {
+  ringGroup.add(createRing(layer.inner, layer.outer, layer.opacity, layer.shift));
 });
 
-/* Particle field */
-const particleCount = 400;
+/* Bulan Titan */
+const moonGeo = new THREE.SphereGeometry(0.08, 24, 16);
+const moonMat = new THREE.ShaderMaterial({
+  uniforms: {
+    colorDark:  { value: new THREE.Color(0x8a5a20) },
+    colorMid:   { value: new THREE.Color(0xd4a860) },
+    colorLight: { value: new THREE.Color(0xf5e0b0) },
+    lightDir:   { value: lightDirection },
+    time:       { value: 0 },
+  },
+  vertexShader: gradientVert,
+  fragmentShader: planetFrag,
+});
+const moon = new THREE.Mesh(moonGeo, moonMat);
+group.add(moon);
+
+/* Partikel debu cincin */
+const dustCount = 500;
+const dustPositions = new Float32Array(dustCount * 3);
+const dustSizes = new Float32Array(dustCount);
+const dustAlphas = new Float32Array(dustCount);
+const dustMeta = [];
+const BASE_ANGULAR_SPEED = 0.08;
+
+for (let i = 0; i < dustCount; i++) {
+  let radius;
+  const r = Math.random();
+  if (r < 0.45) {
+    radius = 1.92 + Math.random() * 0.48;
+  } else if (r < 0.75) {
+    radius = 2.48 + Math.random() * 0.4;
+  } else if (r < 0.90) {
+    radius = 1.64 + Math.random() * 0.28;
+  } else {
+    radius = 1.48 + Math.random() * 2.8;
+  }
+
+  const angle = Math.random() * Math.PI * 2;
+  const y = (Math.random() - 0.5) * 0.016;
+
+  const speedVariation = 0.85 + Math.random() * 0.3;
+  const angularSpeed = (BASE_ANGULAR_SPEED * speedVariation) / Math.sqrt(radius);
+
+  dustPositions[i * 3 + 0] = Math.cos(angle) * radius;
+  dustPositions[i * 3 + 1] = y;
+  dustPositions[i * 3 + 2] = Math.sin(angle) * radius;
+
+  dustSizes[i] = Math.random() * 0.5 + 0.15;
+  dustAlphas[i] = Math.random() * 0.6 + 0.3;
+
+  dustMeta.push({
+    radius: radius,
+    angle: angle,
+    angularSpeed: angularSpeed,
+    y: y,
+  });
+}
+
+const dustGeo = new THREE.BufferGeometry();
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
+dustGeo.setAttribute('size', new THREE.BufferAttribute(dustSizes, 1));
+dustGeo.setAttribute('alpha', new THREE.BufferAttribute(dustAlphas, 1));
+
+const dustMat = new THREE.ShaderMaterial({
+  uniforms: { time: { value: 0 } },
+  vertexShader: `
+    attribute float size;
+    attribute float alpha;
+    varying float vAlpha;
+    void main() {
+      vAlpha = alpha;
+      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+      gl_PointSize = size * (300.0 / -mvPosition.z);
+      gl_Position = projectionMatrix * mvPosition;
+    }
+  `,
+  fragmentShader: `
+    varying float vAlpha;
+    void main() {
+      vec2 c = gl_PointCoord - 0.5;
+      float d = length(c);
+      if (d > 0.5) discard;
+      float a = (1.0 - d * 2.0) * vAlpha;
+      gl_FragColor = vec4(1.0, 0.96, 0.85, a);
+    }
+  `,
+  transparent: true,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+});
+
+const dust = new THREE.Points(dustGeo, dustMat);
+tiltGroup.add(dust);
+
+function updateDustOrbit(dt) {
+  const positions = dustGeo.attributes.position.array;
+  for (let i = 0; i < dustCount; i++) {
+    const meta = dustMeta[i];
+    meta.angle += meta.angularSpeed * dt;
+    positions[i * 3 + 0] = Math.cos(meta.angle) * meta.radius;
+    positions[i * 3 + 1] = meta.y;
+    positions[i * 3 + 2] = Math.sin(meta.angle) * meta.radius;
+  }
+  dustGeo.attributes.position.needsUpdate = true;
+}
+
+/* Particle field (bintang kecil) */
+const particleCount = 500;
 const particleGeo = new THREE.BufferGeometry();
 const particlePositions = new Float32Array(particleCount * 3);
 for (let i = 0; i < particleCount * 3; i++) {
-  particlePositions[i] = (Math.random() - 0.5) * 40;
+  particlePositions[i] = (Math.random() - 0.5) * 60;
 }
 particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
 const particleMat = new THREE.PointsMaterial({
-  color: 0x7c5cff,
+  color: 0xd4a860,
   size: 0.03,
   transparent: true,
   opacity: 0.6,
-  sizeAttenuation: true
+  sizeAttenuation: true,
 });
 const particles = new THREE.Points(particleGeo, particleMat);
 scene.add(particles);
 
-/* Pointer interaction */
-const mouse = new THREE.Vector2(0, 0);
-const target = new THREE.Vector2(0, 0);
+/* ============================================================
+   POINTER INTERACTION — hanya X
+   ============================================================ */
+const pointerX = { current: 0, target: 0 };
 
-function updatePointer(x, y) {
-  target.x = (x / window.innerWidth) * 2 - 1;
-  target.y = -(y / window.innerHeight) * 2 + 1;
+function updatePointer(x) {
+  pointerX.target = (x / window.innerWidth) * 2 - 1;
 }
 
-window.addEventListener('mousemove', (e) => updatePointer(e.clientX, e.clientY));
+window.addEventListener('mousemove', (e) => updatePointer(e.clientX));
 window.addEventListener('touchmove', (e) => {
-  if (e.touches.length > 0) updatePointer(e.touches[0].clientX, e.touches[0].clientY);
+  if (e.touches.length > 0) updatePointer(e.touches[0].clientX);
 }, { passive: true });
 window.addEventListener('touchstart', (e) => {
-  if (e.touches.length > 0) updatePointer(e.touches[0].clientX, e.touches[0].clientY);
+  if (e.touches.length > 0) updatePointer(e.touches[0].clientX);
 }, { passive: true });
 
-/* Animation loop */
+/* ============================================================
+   ANIMATION LOOP
+   ============================================================ */
 const clock = new THREE.Clock();
+let lastTime = 0;
 
 function animate() {
   requestAnimationFrame(animate);
 
   const t = clock.getElapsedTime();
+  const dt = Math.min(t - lastTime, 0.05);
+  lastTime = t;
 
-  mouse.x += (target.x - mouse.x) * 0.06;
-  mouse.y += (target.y - mouse.y) * 0.06;
+  // Smooth pointer
+  pointerX.current += (pointerX.target - pointerX.current) * 0.06;
 
-  group.position.x = mouse.x * 2.2;
-  group.position.y = mouse.y * 1.5;
-  group.rotation.y = mouse.x * 0.6;
-  group.rotation.x = -mouse.y * 0.4;
+  // ✅ Group DIAM di tengah — tidak geser
+  group.position.x = 0;
+  group.position.y = 0;
 
-  ico.rotation.y += 0.003;
-  ico.rotation.x += 0.0015;
-  wireIco.rotation.y -= 0.002;
-  wireIco.rotation.x -= 0.001;
+  // ✅ SATURNUS ROTASI mengikuti cursor (kiri-kanan saja)
+  group.rotation.y = pointerX.current * 0.8;
+  group.rotation.x = 0;
 
-  torus.rotation.z += 0.002;
-  torus.rotation.y += 0.001;
+  // Planet rotasi sendiri pada porosnya (tetap jalan)
+  planet.rotation.y += 0.003;
+  glow.rotation.y += 0.003;
 
-  satellites.forEach((sat, i) => {
-    const p = sat.userData;
-    const angle = p.angle + t * 0.4 + i * 0.5;
-    sat.position.x = Math.cos(angle) * p.r;
-    sat.position.z = Math.sin(angle) * p.r;
-    sat.position.y = p.y + Math.sin(t * 1.5 + i) * 0.3;
-  });
+  // Update noise
+  planetMat.uniforms.time.value = t;
+  moonMat.uniforms.time.value = t;
 
+  // Cincin rotasi
+  ringGroup.rotation.y += 0.0012;
+
+  // Debu orbit
+  updateDustOrbit(dt);
+  dustMat.uniforms.time.value = t;
+
+  // Bulan orbit
+  const moonOrbit = 5.5;
+  const moonSpeed = 0.25;
+  moon.position.x = Math.cos(t * moonSpeed) * moonOrbit;
+  moon.position.z = Math.sin(t * moonSpeed) * moonOrbit;
+  moon.position.y = Math.sin(t * moonSpeed * 0.7) * 0.8;
+
+  // Particles
   particles.rotation.y = t * 0.02;
   particles.rotation.x = t * 0.01;
 
-  keyLight.position.x = Math.sin(t * 0.5) * 5;
-  keyLight.position.z = Math.cos(t * 0.5) * 5;
+  // Light animation
+  keyLight.position.x = Math.sin(t * 0.5) * 6;
+  keyLight.position.z = Math.cos(t * 0.5) * 6;
 
   renderer.render(scene, camera);
 }
@@ -940,13 +1259,13 @@ document.querySelectorAll('a, button, .card').forEach(el => {
     cursorRing.style.width = '60px';
     cursorRing.style.height = '60px';
     cursorRing.style.opacity = '1';
-    cursorRing.style.borderColor = '#7c5cff';
+    cursorRing.style.borderColor = '#d4a860';
   });
   el.addEventListener('mouseleave', () => {
     cursorRing.style.width = '36px';
     cursorRing.style.height = '36px';
     cursorRing.style.opacity = '0.6';
-    cursorRing.style.borderColor = '#a08cff';
+    cursorRing.style.borderColor = '#e8c990';
   });
 });
 
@@ -1001,11 +1320,10 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 /* ============================================================
-   PRELOADER — progress 0 → 100
+   PRELOADER
    ============================================================ */
 const loaderEl = document.getElementById('loader');
 const loaderNum = document.getElementById('loaderNum');
-const loaderBar = document.querySelector('#loader .loader-bar');
 
 let progress = 0;
 const targetProgress = 100;
@@ -1016,27 +1334,18 @@ function updateLoader() {
   if (progress >= 99.5) {
     progress = 100;
     loaderNum.textContent = '100';
-    if (loaderBar) loaderBar.style.setProperty('--w', '100%');
-    loaderBar.style.cssText += ';';
-    loaderBar.querySelector;
-    loaderBar.style.position = 'relative';
-    loaderBar.style.overflow = 'hidden';
-    // set bar width via ::after menggunakan custom style
-    loaderBar.style.setProperty('--bar-width', '100%');
-    const style = document.createElement('style');
-    style.textContent = `#loader .loader-bar::after { width: ${progress}% !important; }`;
-    document.head.appendChild(style);
   } else {
     loaderNum.textContent = Math.floor(progress);
-    const styleId = 'loader-bar-style';
-    let styleEl = document.getElementById(styleId);
-    if (!styleEl) {
-      styleEl = document.createElement('style');
-      styleEl.id = styleId;
-      document.head.appendChild(styleEl);
-    }
-    styleEl.textContent = `#loader .loader-bar::after { width: ${progress}% !important; }`;
   }
+
+  const styleId = 'loader-bar-style';
+  let styleEl = document.getElementById(styleId);
+  if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = styleId;
+    document.head.appendChild(styleEl);
+  }
+  styleEl.textContent = `#loader .loader-bar::after { width: ${progress}% !important; }`;
 
   if (progress < 100) {
     requestAnimationFrame(updateLoader);
@@ -1052,7 +1361,6 @@ window.addEventListener('load', () => {
   setTimeout(updateLoader, 200);
 });
 
-// Fallback — kalau load event gak kepanggil dalam 4 detik, force hide
 setTimeout(() => {
   if (!document.body.classList.contains('ready')) {
     loaderEl.classList.add('hidden');
